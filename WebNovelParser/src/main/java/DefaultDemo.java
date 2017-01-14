@@ -75,7 +75,7 @@ public class DefaultDemo {
             // this needs to be done
             String story = curr;
             String filename2 = format.format("%04d", i).toString() + " " + title + " - " + author + extension;
-            
+
             list.add(new QuickWriteTask(filename2, story));
             //GgUtils.writeToFile(story, directory, filename2);
             i++;
