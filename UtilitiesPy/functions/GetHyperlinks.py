@@ -1,7 +1,7 @@
 import re
 
-filename = "G:\\dev\\code\\Utilities\\src\\main\\resources\\CDTOC.html"
-destination = "G:\\dev\\code\\Utilities\\src\\main\\resources\\parse_CDTOC.html"
+filename = "C:\\Users\\radgrias\\IdeaProjects\\ggwebnovelscraper\\Utilities\\src\\main\\resources\\ISSTHTOC.html"
+destination = "C:\\Users\\radgrias\\IdeaProjects\\ggwebnovelscraper\\Utilities\\src\\main\\resources\\parse_ISSTHTOC.html"
 txt = open(filename, encoding="utf8")
 dest = open(destination, "w+")
 

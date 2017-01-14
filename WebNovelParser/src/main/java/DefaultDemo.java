@@ -1,8 +1,7 @@
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -19,10 +18,81 @@ public class DefaultDemo {
     public static String resources_directory;
     public static String directory;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
-        directory = "G:\\dev\\webnovels\\";
-        getAndWriteCoilingDragon();
+        directory = "C:\\dev\\webnovels\\";
+        getAndWriteISSTH();
+
+//        String story = getStoryHTML("http://www.wuxiaworld.com/issth-index/issth-book-6-chapter-1000/");
+//        String total = GgUtils.executePost("http://www.wuxiaworld.com/issth-index/issth-book-6-chapter-1000/");
+//
+//        Arrays.stream(story
+//                .split("\n")).forEach((line) -> System.out.println(line));
+    }
+
+    public static void getAndWriteISSTH() throws IOException, InterruptedException {
+
+        title = "I Shall Seal The Heavens";
+        author = "Er Gen";
+        extension = ".html";
+
+        resources_directory = "C:\\Users\\radgrias\\IdeaProjects\\ggwebnovelscraper\\Utilities\\src\\main\\resources";
+
+        //
+
+        String filename = resources_directory+"\\"+"parse_ISSTHTOC.html";
+        File file = new File(filename);
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        String curr;
+        int i = 1;
+
+        long beginning = System.currentTimeMillis();
+
+        class QuickWriteTask implements Callable{
+
+            String filename;
+            String content;
+
+            QuickWriteTask(String filename, String content){
+                this.filename = filename;
+                this.content = content;
+            }
+
+            @Override
+            public Object call() throws Exception {
+                String story = getStoryHTML(content);
+                GgUtils.writeToFile(story, directory, filename);
+                //System.out.println("Multi-threaded write done.");
+                return "Done";
+            }
+        }
+
+        ArrayList<QuickWriteTask> list = new ArrayList();
+
+        while ((curr = br.readLine()) != null){
+            Formatter format = new Formatter();
+            // this needs to be done
+            String story = curr;
+            String filename2 = format.format("%04d", i).toString() + " " + title + " - " + author + extension;
+            
+            list.add(new QuickWriteTask(filename2, story));
+            //GgUtils.writeToFile(story, directory, filename2);
+            i++;
+            System.out.println("test"+i);
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        list.stream().forEach(executor::submit);
+
+        Thread.sleep(3000);
+
+        executor.notifyAll();
+        executor.shutdown();
+
+        long ending = System.currentTimeMillis();
+
+        System.out.println(Double.valueOf(ending-beginning)/1000);
     }
 
     public static void getAndWriteCoilingDragon() throws IOException {
@@ -91,7 +161,13 @@ public class DefaultDemo {
         //String endStr = "<div class='post-footer'>";
 
         content = header+content.substring(content.indexOf(begStr));
-        content = content.substring(0, content.indexOf(endStr)+endStr.length())+footer;
+
+        //fix for spoiler titles
+        if (content.contains("Click to show")) {
+            System.out.println("Found spoiler title!");
+            content = content.substring(0, content.indexOf(endStr, content.indexOf(endStr)+1) + endStr.length()) + footer;
+        }else
+            content = content.substring(0, content.indexOf(endStr))+footer;
 
         String regex = "<hr/>";
         Pattern scriptPattern = Pattern.compile(regex);

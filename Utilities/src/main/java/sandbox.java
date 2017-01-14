@@ -11,17 +11,16 @@ public class sandbox {
         //int sum = IntStream.of(scores).reduce(0, (a, b) -> a+b);
         //System.out.println(sum);
 
-        String file = "G:\\dev\\code\\Utilities\\src\\main\\resources\\parse_CDTOC.html";
-
-        File temp = new File(file);
-
-        BufferedReader br = new BufferedReader(new FileReader(temp));
-
-        String curr;
-
-        while((curr = br.readLine()) != null){
-            System.out.println(curr);
-        }
+//        String content = GgUtils.executePost("http://www.wuxiaworld.com/issth-index/");
+//
+//        String file = "C:\\Users\\radgrias\\IdeaProjects\\ggwebnovelscraper\\Utilities\\src\\main\\resources\\ISSTHTOC.html";
+//
+//        File temp = new File(file);
+//
+//        FileWriter fw = new FileWriter(temp);
+//        BufferedWriter bw = new BufferedWriter(fw);
+//
+//        bw.write(content);
 
     }
 }
